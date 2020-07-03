@@ -4,7 +4,7 @@ import { reqWeather } from "../../api";
 import { formateDate } from "../../utils/dateUtils";
 import memoryUtils from "../../utils/memoryUtils";
 import "./index.less";
-import { Modal } from "antd";
+import { Modal, message } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import menuList from "../../config/menuConfig";
 import LinkButton from "../link-button";
@@ -13,6 +13,7 @@ class Header extends Component {
     state = {
         currentTime: formateDate(Date.now()), // 当前时间字符串
         text_day: "", // 天气文本
+        text_temp: "",
     };
 
     getTime = () => {
@@ -23,10 +24,13 @@ class Header extends Component {
     };
 
     getWeather = async () => {
-        // console.log("reqWeather()", reqWeather());
-        const { text_day } = await reqWeather(441900);
-        this.setState({ text_day });
-        // console.log("text_day", text_day);
+        const result = await reqWeather();
+        if (result.status === 0) {
+            const { text, temp } = result.result.now;
+            this.setState({ text_day: text, text_temp: temp });
+        } else {
+            message.error("获取天气信息失败");
+        }
     };
 
     getTitle = () => {
@@ -76,7 +80,7 @@ class Header extends Component {
     }
 
     render() {
-        const { currentTime, text_day } = this.state;
+        const { currentTime, text_day, text_temp } = this.state;
         const name = memoryUtils.user.username;
 
         // 得到当前需要显示的title
@@ -92,11 +96,8 @@ class Header extends Component {
                     <div className="header-bottom-left">{title}</div>
                     <div className="header-bottom-right">
                         <span>{currentTime}</span>
-                        {/* <img
-                            src="http://api.map.baidu.com/images/weather/day/qing.png"
-                            alt="weather"
-                        /> */}
                         <span>{text_day}</span>
+                        <span>{text_temp}℃</span>
                     </div>
                 </div>
             </div>

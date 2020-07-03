@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Card, Table, Button, message } from "antd";
+import { Card, Table, Button, message, Modal } from "antd";
 import { PlusOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import LinkButton from "../../components/link-button";
 import { reqCategorys } from "../../api";
@@ -12,7 +12,29 @@ export default class Category extends Component {
         subCategorys: [], //二级分类列表
         parentId: "0", //当前需要显示的分类列表的parentId(即请求一级或者二级,一级为"0",二级为!"0")
         parentName: "", // 当前需要显示的分类列表的父分类名称(即从哪个名称打开的二级分类列表)
+        showStatus: 0, // 标识添加/更新的确认框是否显示，0：都不显示，1：显示添加，2：显示更新
     };
+
+    // Modal点击取消响应:隐藏确认框
+    handleCancel = () => {
+        this.setState({ showStatus: 0 });
+    };
+
+    // 显示添加分类的Modal
+    showAdd = () => {
+        this.setState({ showStatus: 1 });
+    };
+
+    // 显示更新分类的Modal
+    showUpate = () => {
+        this.setState({ showStatus: 2 });
+    };
+
+    // 添加分类
+    addCategory = () => {};
+
+    //更新分类
+    upateCategory = () => {};
 
     // 初始化Table所有列的数组
     initColumns = () => {
@@ -26,12 +48,13 @@ export default class Category extends Component {
                 width: 300,
                 render: (category) => (
                     <span>
-                        <LinkButton>修改分类</LinkButton>
+                        <LinkButton onClick={this.showUpate}>
+                            修改分类
+                        </LinkButton>
                         {this.state.parentId === "0" ? (
                             <LinkButton
                                 onClick={() => this.showSubCategorys(category)}
                             >
-                                {" "}
                                 {/* 如何向事件回调函数传递参数(如上):先定义一个匿名函数,在函数调用处理的函数并传入参数*/}
                                 查看子分类
                             </LinkButton>
@@ -119,6 +142,7 @@ export default class Category extends Component {
             subCategorys,
             parentName,
             parentId,
+            showStatus,
         } = this.state;
 
         // card的左侧
@@ -137,7 +161,11 @@ export default class Category extends Component {
 
         // card的右侧
         const extra = (
-            <Button type="primary" icon={<PlusOutlined />}>
+            <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={this.showAdd}
+            >
                 添加
             </Button>
         );
@@ -152,6 +180,27 @@ export default class Category extends Component {
                     loading={loading}
                     pagination={{ defaultPageSize: 6, showQuickJumper: true }}
                 />
+
+                <Modal
+                    title="添加分类"
+                    visible={showStatus === 1}
+                    onOk={this.addCategory}
+                    onCancel={this.handleCancel}
+                    okText="确认"
+                    cancelText="取消"
+                >
+                    <p>add</p>
+                </Modal>
+                <Modal
+                    title="更新分类"
+                    visible={showStatus === 2}
+                    onOk={this.upateCategory}
+                    onCancel={this.handleCancel}
+                    okText="确认"
+                    cancelText="取消"
+                >
+                    <p>upate</p>
+                </Modal>
             </Card>
         );
     }
