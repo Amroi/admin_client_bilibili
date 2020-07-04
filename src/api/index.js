@@ -35,8 +35,8 @@ export const reqAddCategory = (parentId, categoryName) => ajax(BASE + '/manage/c
 // 更新分类名称
 export const reqUpateCategory = ({ categoryId, categoryName }) => ajax(BASE + '/manage/category/update', { categoryId, categoryName }, 'POST')
 
-// 百度地图天气请求
-export const reqWeather = () => ajax(url, {})
+// 百度地图天气请求(实时)
+export const reqWeather = () => ajax(url + new Date().getTime(), {})
 
 
 // json请求的接口请求函数

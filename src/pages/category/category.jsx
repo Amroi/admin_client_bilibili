@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import { Card, Table, Button, message, Modal } from "antd";
 import { PlusOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import LinkButton from "../../components/link-button";
-import { reqCategorys } from "../../api";
+import { reqCategorys, reqUpateCategory } from "../../api";
+import AddForm from "./add-form";
+import UpateForm from "./upate-form";
 
 // 商品分类路由
 export default class Category extends Component {
@@ -15,9 +17,10 @@ export default class Category extends Component {
         showStatus: 0, // 标识添加/更新的确认框是否显示，0：都不显示，1：显示添加，2：显示更新
     };
 
-    // Modal点击取消响应:隐藏确认框
+    // Modal点击取消响应
     handleCancel = () => {
-        this.setState({ showStatus: 0 });
+        this.formRef_crt.resetFields(); // 清除输入数据(以免更改下一个是上一个的更改值)
+        this.setState({ showStatus: 0 }); //隐藏确认框
     };
 
     // 显示添加分类的Modal
@@ -26,15 +29,32 @@ export default class Category extends Component {
     };
 
     // 显示更新分类的Modal
-    showUpate = () => {
+    showUpate = (category) => {
+        this.category = category; // 保存分类对象
         this.setState({ showStatus: 2 });
     };
 
-    // 添加分类
+    // 添加分类(的确认按钮)
     addCategory = () => {};
 
-    //更新分类
-    upateCategory = () => {};
+    //更新分类(的确认按钮)
+    upateCategory = async () => {
+        // 实现1：隐藏Modal
+        this.setState({ showStatus: 0 });
+
+        // 异步请求的参数提供
+        const categoryId = this.category._id;
+        const categoryName = this.formRef_crt.getFieldValue("categoryName");
+        // 清除输入数据(以免更改下一个是上一个的更改值)
+        this.formRef_crt.resetFields();
+
+        //实现2：发请求更新分类
+        const result = await reqUpateCategory({ categoryId, categoryName });
+        if (result.status === 0) {
+            //实现3：重新显示更新后的列表
+            this.getCategorys();
+        }
+    };
 
     // 初始化Table所有列的数组
     initColumns = () => {
@@ -48,7 +68,7 @@ export default class Category extends Component {
                 width: 300,
                 render: (category) => (
                     <span>
-                        <LinkButton onClick={this.showUpate}>
+                        <LinkButton onClick={() => this.showUpate(category)}>
                             修改分类
                         </LinkButton>
                         {this.state.parentId === "0" ? (
@@ -144,6 +164,8 @@ export default class Category extends Component {
             parentId,
             showStatus,
         } = this.state;
+        // 读取指定的分类
+        const category = this.category || {}; //如果还没有指定一个空对象
 
         // card的左侧
         const title =
@@ -189,7 +211,7 @@ export default class Category extends Component {
                     okText="确认"
                     cancelText="取消"
                 >
-                    <p>add</p>
+                    <AddForm />
                 </Modal>
                 <Modal
                     title="更新分类"
@@ -199,7 +221,17 @@ export default class Category extends Component {
                     okText="确认"
                     cancelText="取消"
                 >
-                    <p>upate</p>
+                    <UpateForm
+                        categoryName={category.name}
+                        setForm={(current) => {
+                            this.formRef_crt = current;
+                            /*
+					        参数名current可以随意取名,
+							它只是'包装'从子(UpateForm)组件中函数传递过来的参数(即this.formRef.current)存到=左边的属性名中,
+							供父(此)组件的upateCategory方法里调用(line:46)。<=反向数据流？
+							*/
+                        }}
+                    />
                 </Modal>
             </Card>
         );

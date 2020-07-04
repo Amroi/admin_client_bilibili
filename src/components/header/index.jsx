@@ -67,14 +67,14 @@ class Header extends Component {
 
     /*
 	第一次render()之后执行一次
-	一般在这个生命周期函数内执行异步操作如：发送ajax请求/启动定时器。
+	一般在这个生命周期函数内执行异步操作。如：发送ajax请求/启动定时器。
 	*/
     componentDidMount() {
         this.getTime();
         this.getWeather();
     }
 
-    // 当前组件卸载之前调用（就比如此页面有个退出按钮的之后）
+    // 当前组件卸载(死亡)之前调用（就比如此页面有个退出按钮的之后）
     componentWillUnmount() {
         clearInterval(this.timer);
     }
