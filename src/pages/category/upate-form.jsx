@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+// PropTypes语法解析(验证器)：'https://zh-hans.reactjs.org/docs/typechecking-with-proptypes.html#gatsby-focus-wrapper'
 import { Form, Input } from "antd";
 
 // 更新分类中的Form组件
@@ -32,7 +33,16 @@ export default class UpateForm extends Component {
 
         return (
             <Form ref={this.formRef}>
-                <Form.Item name="categoryName" initialValue={categoryName}>
+                <Form.Item
+                    name="categoryName"
+                    initialValue={categoryName}
+                    rules={[
+                        {
+                            required: true,
+                            message: "分类名称必须输入！！",
+                        },
+                    ]}
+                >
                     <Input placeholder="请输入分类名称" />
                 </Form.Item>
             </Form>

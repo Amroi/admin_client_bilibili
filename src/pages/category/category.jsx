@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Card, Table, Button, message, Modal } from "antd";
 import { PlusOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import LinkButton from "../../components/link-button";
-import { reqCategorys, reqUpateCategory } from "../../api";
+import { reqCategorys, reqUpateCategory, reqAddCategory } from "../../api";
 import AddForm from "./add-form";
 import UpateForm from "./upate-form";
 
@@ -35,25 +35,52 @@ export default class Category extends Component {
     };
 
     // 添加分类(的确认按钮)
-    addCategory = () => {};
+    addCategory = () => {
+        this.formRef_crt.validateFields().then(async (values) => {
+            // 实现1：隐藏Modal
+            this.setState({ showStatus: 0 });
+
+            // 异步请求的参数提供
+            const { parentId, categoryName } = values;
+            // 清除输入数据(以免更改下一个是上一个的更改值)
+            this.formRef_crt.resetFields();
+
+            // 实现2：搜集数据，并提交添加分类的请求
+            const result = await reqAddCategory(parentId, categoryName);
+            if (result.status === 0) {
+                if (parentId === this.state.parentId) {
+                    // 若添加的分类(表单里选择的分类)就是当前列表下的分类
+                    this.getCategorys(); // 实现3(情况一)：重新获取添加后的当前分类列表显示
+                } else if (parentId === "0") {
+                    this.getCategorys("0");
+                    /* 实现3(情况二)：此时即在二级分类列表下添加一级分类,重新获取一级分类列表数据,
+				但我们不希望页面跳转到一级分类列表*/
+                }
+            }
+        });
+    };
 
     //更新分类(的确认按钮)
-    upateCategory = async () => {
-        // 实现1：隐藏Modal
-        this.setState({ showStatus: 0 });
+    upateCategory = () => {
+        // 进行表单验证，只有通过了才处理
+        this.formRef_crt.validateFields().then(async (values) => {
+            // 实现1：隐藏Modal
+            this.setState({ showStatus: 0 });
 
-        // 异步请求的参数提供
-        const categoryId = this.category._id;
-        const categoryName = this.formRef_crt.getFieldValue("categoryName");
-        // 清除输入数据(以免更改下一个是上一个的更改值)
-        this.formRef_crt.resetFields();
+            // 异步请求的参数提供
+            const categoryId = this.category._id;
+            // const categoryName = this.formRef_crt.getFieldValue("categoryName");
+            const { categoryName } = values;
+            // 清除输入数据(以免更改下一个是上一个的更改值)
+            this.formRef_crt.resetFields();
 
-        //实现2：发请求更新分类
-        const result = await reqUpateCategory({ categoryId, categoryName });
-        if (result.status === 0) {
-            //实现3：重新显示更新后的列表
-            this.getCategorys();
-        }
+            //实现2：发请求更新分类
+            const result = await reqUpateCategory({ categoryId, categoryName });
+            if (result.status === 0) {
+                //实现3：重新获取更新后的分类列表显示
+                this.getCategorys();
+            }
+        });
     };
 
     // 初始化Table所有列的数组
@@ -86,13 +113,15 @@ export default class Category extends Component {
     };
 
     // 异步获取一级/二级分类列表显示
-    getCategorys = async () => {
+    getCategorys = async (parentId) => {
         // 在发请求前，显示loading
         this.setState({ loading: true });
 
-        const { parentId } = this.state;
+        /* 参数parentId：如果没有指定根据状态(state)中的parentId请求,
+		如果指定了根据指定的请求(在添加分类中有应用) */
+        parentId = parentId || this.state.parentId;
         // 发异步ajax请求，获取数据
-        const result = await reqCategorys(parentId); // 注意是0字符串
+        const result = await reqCategorys(parentId);
 
         //在发请求完成后，隐藏loading
         this.setState({ loading: false });
@@ -211,7 +240,13 @@ export default class Category extends Component {
                     okText="确认"
                     cancelText="取消"
                 >
-                    <AddForm />
+                    <AddForm
+                        categorys={categorys}
+                        parentId={parentId}
+                        setForm={(current) => {
+                            this.formRef_crt = current;
+                        }}
+                    />
                 </Modal>
                 <Modal
                     title="更新分类"
