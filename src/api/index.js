@@ -31,9 +31,36 @@ export const reqCategorys = (parentId) => ajax(BASE + '/manage/category/list', {
 
 // 添加分类
 export const reqAddCategory = (parentId, categoryName) => ajax(BASE + '/manage/category/add', { parentId, categoryName }, 'POST')
+// 参数为多个的时候，不加一个{}变成对象处理的话。传递参数时要格外小心，必须要一一对应。
 
 // 更新分类名称
 export const reqUpateCategory = ({ categoryId, categoryName }) => ajax(BASE + '/manage/category/update', { categoryId, categoryName }, 'POST')
+
+// 获取商品分页列表
+export const reqProducts = (pageNum, pageSize) => ajax(BASE + '/manage/product/list', { pageNum, pageSize })
+
+/* 这样分开写搜索商品似乎太麻烦和笨绌
+// 搜索商品分页列表(根据商品名称)
+export const reqSearchProducts1 = ({ pageNum, pageSize, searchName }) => ajax(BASE + '/manage/product/search', {
+	pageNum,
+	pageSize,
+	productName: searchName
+})
+// 搜索商品分页列表(根据商品描述)
+export const reqSearchProducts2 = ({ pageNum, pageSize, searchName }) => ajax(BASE + '/manage/product/search', {
+	pageNum,
+	pageSize,
+	productDesc: searchName
+})
+*/
+
+// 搜索商品分页列表(根据商品名称/商品描述)
+// 参数searchType：搜索的类型。(商品名称/商品描述productName/productDesc)
+export const reqSearchProducts = ({ pageNum, pageSize, searchName, searchType }) => ajax(BASE + '/manage/product/search', {
+	pageNum,
+	pageSize,
+	[searchType]: searchName // 想要一个变量的值作为属性名的时候，外层包裹中括号
+})
 
 // 百度地图天气请求(实时)
 export const reqWeather = () => ajax(url + new Date().getTime(), {})

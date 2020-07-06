@@ -159,7 +159,8 @@ export default class Category extends Component {
                 this.getCategorys(); // 获取二级分类列表显示
             } /*
 			这种setState()比较少见,语法详见:'https://react.docschina.org/docs/react-component.html#setstate'
-			里面的这句话：setState() 的第二个参数为可选的回调函数，它将在 setState 完成合并并重新渲染组件后执行。
+			里面的这句话：setState() 的第二个参数为可选的回调函数，它将在 setState 完成合并并重新渲染组件后执行
+			(异步，类似于componentDidUpate生命周期)。
 			*/
         );
     };
@@ -178,7 +179,8 @@ export default class Category extends Component {
         this.initColumns();
     }
 
-    // 异步请求：获取分类列表
+    /* 异步请求：获取分类列表
+	(这个是一打开界面的请求还有两个ajax请求在用到的函数里写不用先写在这)*/
     componentDidMount() {
         this.getCategorys(); // 获取一级分类列表显示
     }
