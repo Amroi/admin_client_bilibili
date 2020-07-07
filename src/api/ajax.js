@@ -32,7 +32,7 @@ export default function ajax(url, data = {}, type = "GET") {
 
 		promise.then(response => {
 			// 2.成功 = 调用resolve(value)
-			resolve(response.data)  // (两个data可把我给整蒙圈了...这个是外层ajax请求的data,里面有个自定义接口里的data[见login.js中line:20])
+			resolve(response.data)  // (两个data可把我给整蒙圈了...这个是外层ajax请求的data(ajax数组里我们需要的数组),接口里面有个自己自定义的对象名为data[见login.js中line:20])
 		}).catch(error => {
 			// 3.失败 = 不调用reject(error),而是提示异常信息
 			message.error('请求出错了：' + error.message)

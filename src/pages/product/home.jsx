@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { Button, Card, Input, Table, Select } from "antd";
+import { Button, Card, Input, Table, Select, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import LinkButton from "../../components/link-button";
-import { reqProducts, reqSearchProducts } from "../../api";
+import { reqProducts, reqSearchProducts, reqUpateStatus } from "../../api";
 import { PAGE_SIZE } from "../../utils/constants";
 
 const { Option } = Select;
@@ -37,12 +37,25 @@ export default class ProductHome extends Component {
                 title: "状态",
                 width: 100,
                 dataIndex: "status",
-                render: (text) => (
-                    <span>
-                        <Button type="primary">下架</Button>
-                        <span>在售</span>
-                    </span>
-                ),
+                render: (_, record) => {
+                    const { _id, status } = record;
+                    const currentStatus = status === 1 ? 2 : 1;
+                    return (
+                        <span>
+                            <Button
+                                type="primary"
+                                onClick={() =>
+                                    this.updateStatus(_id, currentStatus)
+                                }
+                            >
+                                {record.status === 1 ? "下架" : "上架"}
+                            </Button>
+                            <span>
+                                {record.status === 1 ? "在售" : "已下架"}
+                            </span>
+                        </span>
+                    );
+                },
             },
             {
                 title: "操作",
@@ -54,8 +67,7 @@ export default class ProductHome extends Component {
                                 () =>
                                     this.props.history.push("/product/detail", {
                                         record,
-                                    })
-                                // 将所有(product)对象使用state传递给目标路由组件
+                                    }) // 将所有(product里的)对象使用state传递给目标路由组件,state里面是对象,所以需要包裹{}
                             }
                         >
                             详情
@@ -67,7 +79,19 @@ export default class ProductHome extends Component {
         ];
     };
 
+    // 更新指定商品的状态
+    updateStatus = async (productId, status) => {
+        const result = await reqUpateStatus(productId, status);
+        // console.log(result);  //{ status : 0 }
+        if (result.status === 0) {
+            message.success("更新商品状态成功");
+            this.getProducts(this.pageNum);
+        }
+    };
+
+    // 获取指定页码的列表数据显示
     getProducts = async (pageNum) => {
+        this.pageNum = pageNum; // 保存pageNum,让其他在当前页面的操作能够调用
         this.setState({ loading: true });
 
         const { searchName, searchType } = this.state;
@@ -122,7 +146,10 @@ export default class ProductHome extends Component {
                         this.setState({ searchName: e.target.value })
                     }
                 />
-                <Button type="primary" onClick={() => this.getProducts(1)}>
+                <Button
+                    type="primary"
+                    onClick={() => this.getProducts(this.pageNum)}
+                >
                     搜索
                 </Button>
             </span>

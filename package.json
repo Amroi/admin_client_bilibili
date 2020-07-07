@@ -11,6 +11,7 @@
         "antd": "^4.3.5",
         "axios": "^0.19.2",
         "craco-less": "^1.17.0",
+        "http-proxy-middleware": "^1.0.4",
         "jsonp": "^0.2.1",
         "prop-types": "^15.7.2",
         "react": "^16.13.1",
@@ -39,5 +40,6 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
-    }
+    },
+    "proxy": "http://api.map.baidu.com"
 }

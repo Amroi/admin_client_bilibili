@@ -13,7 +13,7 @@ import ajax from "./ajax";
 const BASE = 'http://39.100.225.255:5000'; // 更改后的数据请求接口的端口
 // const BASE = 'http://localhost:5000';
 
-const url = 'http://api.map.baidu.com/weather/v1/?district_id=441900&data_type=all&ak=ShR2M0IN99BCG2TUQC3lGt4DrAvrCjXZ&output=json'
+const url = '';
 
 // 登录
 /*
@@ -26,7 +26,7 @@ export const reqLogin = (username, password) => ajax(BASE + '/login', { username
 // 添加用户
 export const reqAddUser = (user) => ajax(BASE + '/manage/user/add', user, 'POST')
 
-// 获取一级/二级分类的列表
+// 获取一级/二级分类下的所有列表
 export const reqCategorys = (parentId) => ajax(BASE + '/manage/category/list', { parentId }) // 形参默认值。前面定义过了所以第三个参数我们不需要再写'GET'
 
 // 添加分类
@@ -35,6 +35,12 @@ export const reqAddCategory = (parentId, categoryName) => ajax(BASE + '/manage/c
 
 // 更新分类名称
 export const reqUpateCategory = ({ categoryId, categoryName }) => ajax(BASE + '/manage/category/update', { categoryId, categoryName }, 'POST')
+
+// 获取一级/二级分类下的某个项
+export const reqCategory = (categoryId) => ajax(BASE + '/manage/category/info', { categoryId })
+
+// 更新商品的状态(上架/下架)
+export const reqUpateStatus = (productId, status) => ajax(BASE + '/manage/product/updateStatus', { productId, status }, 'POST')
 
 // 获取商品分页列表
 export const reqProducts = (pageNum, pageSize) => ajax(BASE + '/manage/product/list', { pageNum, pageSize })
@@ -63,7 +69,7 @@ export const reqSearchProducts = ({ pageNum, pageSize, searchName, searchType })
 })
 
 // 百度地图天气请求(实时)
-export const reqWeather = () => ajax(url + new Date().getTime(), {})
+export const reqWeather = () => ajax(url + '/weather/v1/?district_id=441900&data_type=all&ak=ShR2M0IN99BCG2TUQC3lGt4DrAvrCjXZ&output=json' + new Date().getTime(), {})
 
 
 // json请求的接口请求函数
