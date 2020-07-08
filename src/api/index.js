@@ -68,6 +68,9 @@ export const reqSearchProducts = ({ pageNum, pageSize, searchName, searchType })
 	[searchType]: searchName // 想要一个变量的值作为属性名的时候，外层包裹中括号
 })
 
+// 删除上传的图片
+export const reqDeleteImg = (name) => ajax(BASE + '/manage/img/delete', { name }, 'POST')
+
 // 百度地图天气请求(实时)
 export const reqWeather = () => ajax(url + '/weather/v1/?district_id=441900&data_type=all&ak=ShR2M0IN99BCG2TUQC3lGt4DrAvrCjXZ&output=json' + new Date().getTime(), {})
 

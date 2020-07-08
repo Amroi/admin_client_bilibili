@@ -180,7 +180,8 @@ export default class Category extends Component {
     }
 
     /* 异步请求：获取分类列表
-	(这个是一打开界面的请求还有两个ajax请求在用到的函数里写不用先写在这)*/
+	(如果是打开界面就需要数据或者没有前置事件监听,就需要用到生命周期
+		所以还有其他两个ajax请求(更新和添加)是在用到的函数里写不用先写在这)*/
     componentDidMount() {
         this.getCategorys(); // 获取一级分类列表显示
     }

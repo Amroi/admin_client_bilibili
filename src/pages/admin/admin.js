@@ -23,7 +23,7 @@ export default class Admin extends Component {
 		const user = memoryUtils.user;
 		// 如果内存中没有存储user，说明尚未登陆过账号
 		if (!user || !user._id) {
-			// 作自动跳转到登陆界面(在render()中的使用此方法)
+			// 作自动跳转到登陆界面(在render()中的使用此方法,而不是用history里的方法)
 			return <Redirect to='/login' />
 		}
 		/*

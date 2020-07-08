@@ -67,12 +67,21 @@ export default class ProductHome extends Component {
                                 () =>
                                     this.props.history.push("/product/detail", {
                                         record,
-                                    }) // 将所有(product里的)对象使用state传递给目标路由组件,state里面是对象,所以需要包裹{}
+                                    }) // 将所有(product里的)对象使用state传递给目标路由组件,指定为state中的对象属性名,所以包裹{}
                             }
                         >
                             详情
                         </LinkButton>
-                        <LinkButton>修改</LinkButton>
+                        <LinkButton
+                            onClick={() =>
+                                this.props.history.push(
+                                    "product/addupate",
+                                    record
+                                )
+                            }
+                        >
+                            修改
+                        </LinkButton>
                     </span>
                 ),
             },
@@ -81,8 +90,8 @@ export default class ProductHome extends Component {
 
     // 更新指定商品的状态
     updateStatus = async (productId, status) => {
-        const result = await reqUpateStatus(productId, status);
-        // console.log(result);  //{ status : 0 }
+        const result = await reqUpateStatus(productId, status); // 两个状态为需要更改的商品id和状态
+        // console.log(result);  // { status : 0 }
         if (result.status === 0) {
             message.success("更新商品状态成功");
             this.getProducts(this.pageNum);
@@ -156,7 +165,11 @@ export default class ProductHome extends Component {
         );
 
         const extra = (
-            <Button type="primary" icon={<PlusOutlined />}>
+            <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => this.props.history.push("/product/addupate")}
+            >
                 添加
             </Button>
         );
