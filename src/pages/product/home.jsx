@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Button, Card, Input, Table, Select, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import LinkButton from "../../components/link-button";
-import { reqProducts, reqSearchProducts, reqUpateStatus } from "../../api";
+import { reqProducts, reqSearchProducts, reqUpdateStatus } from "../../api";
 import { PAGE_SIZE } from "../../utils/constants";
 
 const { Option } = Select;
@@ -90,7 +90,7 @@ export default class ProductHome extends Component {
 
     // 更新指定商品的状态
     updateStatus = async (productId, status) => {
-        const result = await reqUpateStatus(productId, status); // 两个状态为需要更改的商品id和状态
+        const result = await reqUpdateStatus(productId, status); // 两个状态为需要更改的商品id和状态
         // console.log(result);  // { status : 0 }
         if (result.status === 0) {
             message.success("更新商品状态成功");

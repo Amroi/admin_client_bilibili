@@ -14,7 +14,7 @@ function getBase64(file) {
     });
 }
 
-// 用于图片上传的组件
+// 用于商品图片上传的组件
 export default class PicturesWall extends React.Component {
     static propTypes = {
         imgs: PropTypes.array, //这次是不用加required了,因为此组件下有可能是增加商品
@@ -64,7 +64,7 @@ export default class PicturesWall extends React.Component {
     };
 
     /* 监视上传过程的函数
-	file: 当前操作的图片文件(上传/删除)
+	file: (当前)操作的图片文件(上传/删除)
 	fileList: 所有已上传图片文件对象的数组 */
     handleChange = async ({ file, fileList }) => {
         console.log("handleChange()", file.status, fileList.length, file);

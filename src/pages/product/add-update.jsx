@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { Card, Form, Input, Cascader, Button } from "antd";
+import { Card, Form, Input, Cascader, Button, message } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import LinkButton from "../../components/link-button";
-import { reqCategorys } from "../../api";
+import { reqCategorys, reqAddOrUpdateProduct } from "../../api";
 import PicturesWall from "./pictures-wall";
+import RichTextEditor from "./rich-text-editor";
 
 const { Item } = Form;
 const { TextArea } = Input;
@@ -16,6 +17,7 @@ export default class ProductAddUpate extends Component {
         super(props);
         // 创建用来保存ref标识的标签对象的容器
         this.pw = React.createRef();
+        this.rte = React.createRef();
     }
 
     state = {
@@ -26,11 +28,44 @@ export default class ProductAddUpate extends Component {
     validatePrice = (_, value) =>
         value * 1 > 0 ? Promise.resolve() : Promise.reject("价格必须大于0");
 
-    handSubmit = (values) => {
-        console.log("values", values);
-
+    // 表格提交
+    handSubmit = async (values) => {
+        // 1. 搜集数据,并封装成product对象
+        const { name, desc, price, categoryIds } = values;
+        let pCategoryId, categoryId;
+        if (categoryIds.length === 1) {
+            categoryId = categoryIds[0];
+        } else {
+            pCategoryId = categoryIds[0];
+            categoryId = categoryIds[1];
+        }
         const imgs = this.pw.current.getImgs();
-        console.log("imgs", imgs);
+        const detail = this.rte.current.getDetail();
+
+        const product = {
+            name,
+            desc,
+            price,
+            imgs,
+            detail,
+            pCategoryId,
+            categoryId,
+        };
+        // console.log("product", product);
+        // 如果是更新,需要添加_id属性
+        if (this.isUpdate) {
+            product._id = this.product._id;
+        }
+
+        // 2. 调用接口请求函数去添加/更新
+        const result = await reqAddOrUpdateProduct(product);
+        // 3.根据结果提示
+        if (result.status === 0) {
+            message.success(`${this.isUpdate ? "更新" : "添加"}商品成功！`);
+            this.props.history.goBack();
+        } else {
+            message.error(`${this.isUpdate ? "更新" : "添加"}商品失败！`);
+        }
     };
 
     initOptions = async (categorys) => {
@@ -124,13 +159,13 @@ export default class ProductAddUpate extends Component {
         // 取出上一级路由跳转携带的state,但我们添加和更新用的是同一个路由,如果添加有值,更新没值
         const record = this.props.location.state;
         this.isUpdate = !!record; // 保存是否是更新的标识,这个运算符可以把表达式强行转换为 逻辑值。
-        // (或许会问为啥不用！?? undefined也是有值啊,只是为不为空的问题，!!可达到快速判断非空的目的)
+        // (或许会问为啥不用！?? undefined也是有值吧,而这个属性也是固有属性，!!可达到快速判断值非空的目的)
         this.product = record || {}; // 取出并保存到本地以便能调用,做对应处理可能为空
     }
 
     render() {
         const { isUpdate, product } = this;
-        const { pCategoryId, categoryId, imgs } = product;
+        const { pCategoryId, categoryId, imgs, detail } = product;
         // 用来接收级联分类id的数组
         const categoryIds = [];
         if (isUpdate) {
@@ -234,8 +269,12 @@ export default class ProductAddUpate extends Component {
                     <Item label="商品图片">
                         <PicturesWall ref={this.pw} imgs={imgs} />
                     </Item>
-                    <Item label="商品详情">
-                        <span>商品详情</span>
+                    <Item
+                        label="商品详情"
+                        labelCol={{ span: 2 }}
+                        wrapperCol={{ span: 20 }}
+                    >
+                        <RichTextEditor ref={this.rte} detail={detail} />
                     </Item>
                     <Item style={{ marginLeft: 30 }}>
                         <Button type="primary" htmlType="submit">

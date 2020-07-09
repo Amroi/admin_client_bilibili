@@ -33,7 +33,10 @@ export default class Admin extends Component {
 		 */
 
 		return (
-			<Layout style={{ height: "100%" }}>
+			<Layout style={{ minHeight: "100%" }}>
+				{/*minheght比hight的好处是:height太局限性,如果高度超过设定值的时候会覆盖点 
+				比如有个子div的高度大于父div的高度时,就会覆盖掉父div未超过子div高度的部分
+				*/}
 				<Sider>
 					<LeftNav />
 				</Sider>

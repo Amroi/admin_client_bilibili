@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Card, Table, Button, message, Modal } from "antd";
 import { PlusOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import LinkButton from "../../components/link-button";
-import { reqCategorys, reqUpateCategory, reqAddCategory } from "../../api";
+import { reqCategorys, reqUpdateCategory, reqAddCategory } from "../../api";
 import AddForm from "./add-form";
 import UpateForm from "./upate-form";
 
@@ -75,7 +75,10 @@ export default class Category extends Component {
             this.formRef_crt.resetFields();
 
             //实现2：发请求更新分类
-            const result = await reqUpateCategory({ categoryId, categoryName });
+            const result = await reqUpdateCategory({
+                categoryId,
+                categoryName,
+            });
             if (result.status === 0) {
                 //实现3：重新获取更新后的分类列表显示
                 this.getCategorys();

@@ -4,33 +4,32 @@ import { reqWeather } from "../../api";
 import { formateDate } from "../../utils/dateUtils";
 import memoryUtils from "../../utils/memoryUtils";
 import "./index.less";
-import { Modal, message } from "antd";
+import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import menuList from "../../config/menuConfig";
 import LinkButton from "../link-button";
 
 class Header extends Component {
     state = {
-        currentTime: formateDate(Date.now()), // 当前时间字符串
-        text_day: "", // 天气文本
-        text_temp: "",
+        currentTime: "", // 当前时间字符串
+        weather: "", // 天气文本
+        dayPictureUrl: "", // 白天天气图片url
+        nightPictureUrl: "", // 夜间天气图片url
     };
 
     getTime = () => {
         this.timer = setInterval(() => {
-            const currentTime = formateDate(Date.now());
+            const currentTime = formateDate(new Date());
             this.setState({ currentTime });
         }, 1000);
     };
 
     getWeather = async () => {
-        const result = await reqWeather();
-        if (result.status === 0) {
-            const { text, temp } = result.result.now;
-            this.setState({ text_day: text, text_temp: temp });
-        } else {
-            message.error("获取天气信息失败");
-        }
+        // 调用接口请求异步获取数据
+        const { weather, dayPictureUrl, nightPictureUrl } = await reqWeather(
+            "东莞"
+        );
+        this.setState({ weather, dayPictureUrl, nightPictureUrl });
     };
 
     getTitle = () => {
@@ -42,7 +41,9 @@ class Header extends Component {
                 title = item.title;
             } else if (item.children) {
                 // 在所有子item中查找匹配的
-                const cItem = item.children.find((cItem) => cItem.key === path);
+                const cItem = item.children.find(
+                    (cItem) => path.indexOf(cItem.key) === 0
+                );
                 //  这里能用find()方法了是因为只有一层数组了，上面用forEach()不用这个是因为有子item
                 if (cItem) {
                     //如果有值才说明有匹配的，然后取出他的title
@@ -80,7 +81,12 @@ class Header extends Component {
     }
 
     render() {
-        const { currentTime, text_day, text_temp } = this.state;
+        const {
+            currentTime,
+            weather,
+            dayPictureUrl,
+            nightPictureUrl,
+        } = this.state;
         const name = memoryUtils.user.username;
 
         // 得到当前需要显示的title
@@ -95,9 +101,14 @@ class Header extends Component {
                 <div className="header-bottom">
                     <div className="header-bottom-left">{title}</div>
                     <div className="header-bottom-right">
-                        <span>{currentTime}</span>
-                        <span>{text_day}</span>
-                        <span>{text_temp}℃</span>
+                        <span>{weather}</span>
+                        <span>
+                            <img src={dayPictureUrl} alt="白天天气" />
+                        </span>
+                        <span>
+                            <img src={nightPictureUrl} alt="夜间天气" />
+                        </span>
+                        <span className="last">{currentTime}</span>
                     </div>
                 </div>
             </div>

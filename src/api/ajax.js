@@ -3,6 +3,8 @@ import { message } from 'antd'
 能发送异步ajax请求的函数模块。
 封装axios库。(axios用法参考网页'https://github.com/axios/axios')
 ajax请求函数的返回值是Promise对象(所以加return)。
+
+自己创建Promise能优化：
 1.优化1：统一处理请求异常？
 	在外层包一个自己创建的promise对象；(line: 22)(axios本身有promise对象,为了集中处理错误自己包一个)
 	在请求出错时，不调用reject(error)，而是显示错误提示 
