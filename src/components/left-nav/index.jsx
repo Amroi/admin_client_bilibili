@@ -5,6 +5,7 @@ import { Link, withRouter } from "react-router-dom";
 import menuList from "../../config/menuConfig";
 import { Menu } from "antd";
 import { Icon } from "@ant-design/compatible"; // 4.0已经废弃，但能兼容
+
 const { SubMenu } = Menu; // 菜单下的菜单项
 
 // 左侧导航的组件
@@ -107,7 +108,8 @@ class LeftNav extends Component {
         if (path.indexOf("/product") === 0) {
             // 若当前请求的是商品或其子路由界面
             path = "/product";
-        } /*indexOf() 方法可返回某个指定的字符串值在字符串中首次出现的位置。
+        }
+        /*indexOf() 方法可返回某个指定的字符串值在字符串中首次出现的位置。
 		(这么做是想在商品管理子路由里仍然可以高亮左侧商品管理项)
 		*/
 
@@ -121,9 +123,10 @@ class LeftNav extends Component {
                 <Menu
                     theme="dark"
                     mode="inline"
-                    selectedKeys={[path]}
-                    defaultOpenKeys={[openKey]}
+                    selectedKeys={[path]} // 当前选中的菜单项key数组
+                    defaultOpenKeys={[openKey]} // 初始展开的SubMenu菜单项key数组
                 >
+                    {/* 展开和选中是不同的行为，展开是应用于有子列表的Menu*/}
                     {this.menuNodes}
                 </Menu>
             </div>

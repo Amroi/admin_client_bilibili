@@ -12,14 +12,14 @@ export default class Login extends React.Component {
 	onFinish = async (values) => {
 		const { username, password } = values;
 		const result = await reqLogin(username, password)
-		// console.log('登陆结果', result); // 可能出现(已经在子数组data中了,前面指定了ajax.js)：{status: 0,data:user}; {status: 1,msg:'xxx'}
-		if (result.status === 0) { //指定登陆成功情况（外层有个status:200是接口请求成功的status,当然我们已经指定在data中了）
+		// console.log('登陆结果', result); // {status: 0,data: user}; {status: 1,msg: 'xxx'}
+		if (result.status === 0) { // 判断登陆成功情况（外层有个status:200是接口请求成功的status,前面文档ajax.js我们已经指定在data中了）
 			message.success('登陆成功');
 
-			// 保存user以便主页显示
 			const user = result.data;
-			memoryUtils.user = user; // 保存在内存中
-			storageUtils.saveUser(user); // 保存在local中/或session中(第二步是=>在入口的index.js读取)
+			memoryUtils.user = user; // 保存在内存中，保存user以便主页显示
+			storageUtils.saveUser(user);
+			// (解决刷新页面不能持续登录)保存在local中/或session中(第二步是=>在入口的index.js读取)
 
 			this.props.history.replace('/');
 			// history中replace()和push()方法的区别：是否可以回退,不可以前者，可以后者

@@ -101,14 +101,14 @@ class Header extends Component {
                 <div className="header-bottom">
                     <div className="header-bottom-left">{title}</div>
                     <div className="header-bottom-right">
-                        <span>{weather}</span>
+                        <span className="time">{currentTime}</span>
                         <span>
                             <img src={dayPictureUrl} alt="白天天气" />
                         </span>
                         <span>
                             <img src={nightPictureUrl} alt="夜间天气" />
                         </span>
-                        <span className="last">{currentTime}</span>
+                        <span className="weather">{weather}</span>
                     </div>
                 </div>
             </div>
