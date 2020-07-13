@@ -2,6 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.less';
 import App from './App';
+
+import { ConfigProvider } from 'antd';
+import zh_CN from 'antd/lib/locale-provider/zh_CN';
+
 import storageUtils from './utils/storageUtils';
 import memoryUtils from './utils/memoryUtils';
 
@@ -15,7 +19,9 @@ const user = storageUtils.getUser();
 memoryUtils.user = user;
 
 ReactDOM.render(
-	<App />,
+	<ConfigProvider locale={zh_CN}>
+		<App />
+	</ConfigProvider>,
 	document.getElementById('root')
 );
 

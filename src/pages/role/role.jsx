@@ -1,14 +1,21 @@
 import React, { Component } from "react";
 import { Card, Button, Table, message, Modal } from "antd";
-import { reqRoles, reqAddRole } from "../../api";
+import { reqRoles, reqAddRole, reqUpdateRole } from "../../api";
+import memoryUtils from "../../utils/memoryUtils.js";
+import { formateDate } from "../../utils/dateUtils.js";
 import AddForm from "./add-form";
 import UpateForm from "./update-form";
 
 // 角色路由
 export default class Role extends Component {
+    constructor(props) {
+        super(props);
+        this.auth = React.createRef();
+    }
+
     state = {
         roles: [], // 所有角色的列表
-        role: {}, // 选中的角色(根据此要实现前面的按钮对应高亮)
+        role: {}, // 选中的角色(根据此要实现表格前面的按钮对应高亮)
         loading: false,
         add_visible: false,
         update_visible: false,
@@ -70,15 +77,33 @@ export default class Role extends Component {
         });
     };
 
-    okUpdateModal = () => {
-        console.log("UpdateModal");
+    okUpdateModal = async () => {
+        this.setState({ update_visible: false });
+
+        const { role } = this.state;
+        // 得到子组件内部最新的menus
+        const menus = this.auth.current.getMenus();
+
+        role.menus = menus;
+        role.auth_time = Date.now();
+        //Date.now()和new.Date().getTime()都是获取1970年1月1日截止到现在时刻的时间戳
+        role.auth_name = memoryUtils.user.username;
+
+        // 请求更新
+        const result = await reqUpdateRole(role);
+        if (result.status === 0) {
+            // this.getRoles();  // 不需要重新请求整个接口又去加载
+            this.setState({ roles: [...this.state.roles] });
+            // 我们下面右面有个指定行的方法，所以roles能看到某个role的变化，即知道改变哪个role里面的menus
+            message.success("设置角色权限成功");
+        }
     };
 
-    onRow = (role) => {
+    onRow = (role, index) => {
         return {
             onClick: (e) => {
                 // 点击行(按钮中算?)的回调,此函数(onRow()语法结构)的用法可参考官方文档
-                console.log("onRow() click", role); // role:当前行对象属性
+                console.log("onRow() click", role, index); // role:当前行对象属性
                 this.setState({ role });
             },
         };
@@ -93,10 +118,12 @@ export default class Role extends Component {
             {
                 title: "创建时间",
                 dataIndex: "create_time",
+                render: (create_time) => formateDate(new Date(create_time)),
             },
             {
                 title: "授权时间",
                 dataIndex: "auth_time",
+                render: (text) => formateDate(new Date(text)),
             },
             {
                 title: "授权人",
@@ -182,7 +209,7 @@ export default class Role extends Component {
                     okText="确定"
                     cancelText="取消"
                 >
-                    <UpateForm role={role} />
+                    <UpateForm role={role} ref={this.auth} />
                 </Modal>
 
                 <Table

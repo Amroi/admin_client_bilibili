@@ -26,6 +26,9 @@ export const reqLogin = (username, password) => ajax(BASE + '/login', { username
 // 添加用户
 export const reqAddUser = (user) => ajax(BASE + '/manage/user/add', user, 'POST')
 
+// 获取所有用户列表
+export const reqUser = () => ajax(BASE + '/manage/user/list')
+
 // 获取一级/二级分类下的所有列表
 export const reqCategorys = (parentId) => ajax(BASE + '/manage/category/list', { parentId }) // 形参默认值。前面定义过了所以第三个参数我们不需要再写'GET'
 
@@ -81,11 +84,14 @@ export const reqUpdateProduct = (product) => ajax(BASE + '/manage/product/update
 // 添加/更新商品
 export const reqAddOrUpdateProduct = (product) => ajax(BASE + '/manage/product/' + (product._id ? 'update' : 'add'), product, 'POST')
 
-//  获取所有角色列表
+// 获取所有角色列表
 export const reqRoles = () => ajax(BASE + '/manage/role/list')
 
 // 添加角色
 export const reqAddRole = (roleName) => ajax(BASE + '/manage/role/add', { roleName }, 'POST')
+
+// 更新角色(给角色设置权限)
+export const reqUpdateRole = (role) => ajax(BASE + '/manage/role/update', role, 'POST')
 
 // 百度地图天气请求(实时,不支持jsonp)
 // export const reqWeather = () => ajax(url + '/weather/v1/?district_id=441900&data_type=all&ak=ShR2M0IN99BCG2TUQC3lGt4DrAvrCjXZ&output=json' + new Date().getTime(), {})
