@@ -3,6 +3,7 @@ import logo from "../../assets/images/logo.png";
 import "./index.less";
 import { Link, withRouter } from "react-router-dom";
 import menuList from "../../config/menuConfig";
+import memoryUtils from "../../utils/memoryUtils";
 import { Menu } from "antd";
 import { Icon } from "@ant-design/compatible"; // 4.0已经废弃，但能兼容
 
@@ -10,6 +11,15 @@ const { SubMenu } = Menu; // 菜单下的菜单项
 
 // 左侧导航的组件
 class LeftNav extends Component {
+    // 判断当前登陆用户拥有哪些item权限的方法，此方法返回值应当是布尔类型
+    hasAuth = (item) => {
+        /* 理当有下面三种身份情况：1.如果当前用户是admin(超级管理员)
+		2. 当前用户有一些子item的权限
+		*/
+        const key = item.key;
+        const menus = memoryUtils.user.role.menus;
+    };
+
     /* 
 	根据menu的数据数组生成对应的标签数组,使用map() + 递归调用。
 	 (相比下面的，动态生成结构，只是antd4.0图标的表示方法不能这么表示了(组件方式),
@@ -53,41 +63,44 @@ class LeftNav extends Component {
         const path = this.props.location.pathname;
 
         return menuList.reduce((pre, item) => {
-            // 原理：pre初始设定为[](空数组),每次向里面填加标签(push()方法),一次结束时并返回pre
-            // 一样地。判断后,向pre填加<Menu.Item></Menu.Item>
-            if (!item.children) {
-                pre.push(
-                    <Menu.Item key={item.key}>
-                        <Link to={item.key}>
-                            <Icon type={item.icon} />
-                            {item.title}
-                        </Link>
-                    </Menu.Item>
-                );
-            } else {
-                // 查找一个与当前请求路径匹配的子Item
-                const cItem = item.children.find(
-                    (cItem) => path.indexOf(cItem.key) === 0
-                );
-                // 如果存在,说明当前的item子列表需要打开
-                if (cItem) {
-                    this.openKey = item.key;
-                }
+            // 关于左侧导航栏的显示,如果当前用户有对应的item权限,才需要显示对应菜单项
+            if (this.hasAuth(item)) {
+                /* 原理：pre初始设定为[](空数组),每次向里面填加标签(push()方法),
+			每次结束时并返回pre。一样地,判断后,向pre填加<Menu.Item></Menu.Item>*/
+                if (!item.children) {
+                    pre.push(
+                        <Menu.Item key={item.key}>
+                            <Link to={item.key}>
+                                <Icon type={item.icon} />
+                                {item.title}
+                            </Link>
+                        </Menu.Item>
+                    );
+                } else {
+                    // 查找一个与当前请求路径匹配的子Item
+                    const cItem = item.children.find(
+                        (cItem) => path.indexOf(cItem.key) === 0
+                    );
+                    // 如果存在,说明当前的item子列表需要打开
+                    if (cItem) {
+                        this.openKey = item.key;
+                    }
 
-                // 向pre添加<SubMenu></SubMenu>
-                pre.push(
-                    <SubMenu
-                        key={item.key}
-                        title={
-                            <span>
-                                <Icon type={item.icon} /> {item.title}
-                            </span>
-                        }
-                    >
-                        {this.getMenuNodes_reduce(item.children)}
-                        {/*递归调用,这里根据children数组去生成*/}
-                    </SubMenu>
-                );
+                    // 向pre添加<SubMenu></SubMenu>
+                    pre.push(
+                        <SubMenu
+                            key={item.key}
+                            title={
+                                <span>
+                                    <Icon type={item.icon} /> {item.title}
+                                </span>
+                            }
+                        >
+                            {this.getMenuNodes_reduce(item.children)}
+                            {/*递归调用,这里根据children数组去生成*/}
+                        </SubMenu>
+                    );
+                }
             }
             return pre; // 不断地返回pre
         }, []);
