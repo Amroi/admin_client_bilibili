@@ -155,10 +155,7 @@ export default class ProductHome extends Component {
                         this.setState({ searchName: e.target.value })
                     }
                 />
-                <Button
-                    type="primary"
-                    onClick={() => this.getProducts(this.pageNum)}
-                >
+                <Button type="primary" onClick={() => this.getProducts(1)}>
                     搜索
                 </Button>
             </span>
@@ -182,6 +179,7 @@ export default class ProductHome extends Component {
                     columns={this.columns}
                     bordered
                     pagination={{
+                        current: this.pageNum,
                         total,
                         defaultPageSize: PAGE_SIZE, // 与Ajax里请求的pagesize应保持一致(将这个变量保存设定在一个通用模块中是不错的做法,方便且易于管理)
                         showQuickJumper: true,

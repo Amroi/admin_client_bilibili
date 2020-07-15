@@ -124,6 +124,7 @@ export default class User extends Component {
             // 1.收集输入数据
             const user = values;
             console.log(values);
+
             // 如果是更新,需要给user指定_id属性(更新自带了_id属性)
             if (this.user) {
                 user._id = this.user._id;

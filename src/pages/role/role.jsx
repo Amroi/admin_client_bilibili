@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Card, Button, Table, message, Modal } from "antd";
 import { reqRoles, reqAddRole, reqUpdateRole } from "../../api";
 import memoryUtils from "../../utils/memoryUtils.js";
+import storageUtils from "../../utils/storageUtils";
 import { formateDate } from "../../utils/dateUtils.js";
 import AddForm from "./add-form";
 import UpateForm from "./update-form";
@@ -92,13 +93,23 @@ export default class Role extends Component {
         // 请求更新
         const result = await reqUpdateRole(role);
         if (result.status === 0) {
-            // this.getRoles();  // 不需要重新请求整个接口又去加载
-            this.setState({ roles: [...this.state.roles] });
-            // 我们下面右面有个指定行的方法，所以roles能看到某个role的变化，即知道改变哪个role里面的menus
-            message.success("设置角色权限成功");
+            // 判断是否更改的是当前用户的角色权限
+            if (role._id === memoryUtils.user.role_id) {
+                memoryUtils.user = {};
+                storageUtils.removeUser(); // 先要清除两个地方的存储的信息
+
+                this.props.history.replace("/login");
+                message.warn("当前角色权限已发生更改,请重新登录", 5);
+            } else {
+                // this.getRoles();  // 不需要重新请求整个接口又去加载
+                this.setState({ roles: [...this.state.roles] });
+                // 我们下面右面有个指定行的方法，所以roles能看到某个role的变化，即知道改变哪个role里面的menus
+                message.success("设置角色权限成功");
+            }
         }
     };
 
+    // 点击整行(不包括前面小点)
     onRow = (role, index) => {
         return {
             onClick: (e) => {
@@ -219,7 +230,9 @@ export default class Role extends Component {
                     rowSelection={{
                         type: "radio",
                         selectedRowKeys: [role._id], // 不设置没有高亮行为不知道点选了哪个
-                    }} /* 指定选中项的key数组,需要和onChange(我们用的是onRow)进行配合
+                        onSelect: (role) => this.setState({ role }), // 这个是前面小点点的选择(他不包括在行选择中)
+                    }}
+                    /* 指定选中项的key数组,需要和onChange(我们用的是onRow)进行配合
 					数组格式是因为兼容type：'checkbox' */
                     onRow={this.onRow}
                     dataSource={roles}

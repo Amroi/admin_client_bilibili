@@ -13,11 +13,24 @@ const { SubMenu } = Menu; // 菜单下的菜单项
 class LeftNav extends Component {
     // 判断当前登陆用户拥有哪些item权限的方法，此方法返回值应当是布尔类型
     hasAuth = (item) => {
-        /* 理当有下面三种身份情况：1.如果当前用户是admin(超级管理员)
-		2. 当前用户有一些子item的权限
-		*/
-        const key = item.key;
+        const { key, isPublic } = item;
         const menus = memoryUtils.user.role.menus;
+        const username = memoryUtils.user.username;
+
+        /* 理当有下面三种身份情况：
+		1.如果当前用户是admin(超级管理员)
+		2.如果当前用户无任何item权限，给予公开权限(首页)
+		3. 当前用户有一些item的权限：即key没有在menus中
+		*/
+        if (username === "admin" || isPublic || menus.indexOf(key) !== -1) {
+            return true;
+        } else if (item.children) {
+            // 4.如果当前用户有一些item的某个子item的权限
+            return !!item.children.find(
+                (child) => menus.indexOf(child.key) !== -1
+            );
+        }
+        return false;
     };
 
     /* 
@@ -62,11 +75,11 @@ class LeftNav extends Component {
         // 得到当前请求路径
         const path = this.props.location.pathname;
 
+        /* 原理：pre初始设定为[](空数组),每次向里面填加标签(push()方法),
+		每次结束时并返回pre。一样地,判断后,向pre填加<Menu.Item></Menu.Item>*/
         return menuList.reduce((pre, item) => {
             // 关于左侧导航栏的显示,如果当前用户有对应的item权限,才需要显示对应菜单项
             if (this.hasAuth(item)) {
-                /* 原理：pre初始设定为[](空数组),每次向里面填加标签(push()方法),
-			每次结束时并返回pre。一样地,判断后,向pre填加<Menu.Item></Menu.Item>*/
                 if (!item.children) {
                     pre.push(
                         <Menu.Item key={item.key}>
