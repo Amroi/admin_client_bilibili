@@ -1,24 +1,4 @@
-### 1. 高阶函数
-
-    1). 一类特别的函数
-        a. 接受函数类型的参数
-        b. 返回值是函数
-    2). 常见例子
-        a. 定时器：setTimeout() / setInterval()
-        b. Promise：Promise(() => {}) then( value => {} , error => {})
-        c. 数据遍历相关的方法：forEach()/filter()/map()/reduce()/find()/findIndex()
-        d. 函数对象的bind()
-        e. From.create()
-    3). 高阶函数更新动态，更加具有扩展性
-
-### 2. 高阶组件
-
-    1). 本质就是一个函数
-    2). 接收一个组件(被包装组件)，返回一个新的组件(包装组件)，包装组件会向被包装组件传入特定属性
-    3). 作用：扩展组件的功能
-    4). 高阶组件也是高阶函数：接收一个组件函数，返回是一个新的组件函数
-
-### 3.1 react 生命周期方法
+### 1.1 react 生命周期方法
 
     1). componentWillMount
         a. 在第一次render()之前执行一次，为第一次render()准备数据(是同步准备)。
@@ -43,11 +23,11 @@
       	a. 在组件从 DOM 中移除之前立刻被调用。当前组件卸载(死亡)之前调用。
        （通常用来卸载计时器啊等等）
 
-### 3.2 参考图示(改变分自身 state 发生改变和父组件 props)
+### 1.2 参考图示(改变分自身 state 发生改变和父组件 props)
 
 ![image.png](https://i.loli.net/2020/07/13/s1ntvR8lepTI3BY.png)
 
-### 4. componentDidUpdate vs componentWillReceiveProps
+### 2. componentDidUpdate vs componentWillReceiveProps
 
     1). 区别
     	a. 在React生命周期调用时机
@@ -61,7 +41,7 @@
       	(这点区别非常重要，也是componentWillReceiveProps生命周期被废弃的重要原因(可能导致某些问题))
         **: 所以推荐使用componentDidUpdate
 
-### 5.async 和 await
+### 3.async 和 await
 
     1）作用？
     a. 简化promise对象的使用：不用再使用then()来指定成功/失败的回调函数，
