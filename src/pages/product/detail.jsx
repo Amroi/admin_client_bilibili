@@ -4,6 +4,7 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import LinkButton from "../../components/link-button";
 import { BASE_IMG_URL } from "../../utils/constants";
 import { reqCategory } from "../../api";
+import memoryUtils from "../../utils/memoryUtils";
 
 // 商品的详情子路由组件
 export default class ProductDetail extends Component {
@@ -13,7 +14,7 @@ export default class ProductDetail extends Component {
     };
 
     async componentDidMount() {
-        const { pCategoryId, categoryId } = this.props.location.state.record;
+        const { pCategoryId, categoryId } = memoryUtils.product;
         if (pCategoryId === "0") {
             // 一级分类下的商品
             const result = await reqCategory(categoryId);
@@ -40,15 +41,14 @@ export default class ProductDetail extends Component {
         }
     }
 
+    // 在卸载之前清楚保存的数据
+    componentWillUnmount() {
+        memoryUtils.product = {};
+    }
+
     render() {
         // 读取携带过来的state数据(保存在了location对象中)
-        const {
-            name,
-            desc,
-            price,
-            detail,
-            imgs,
-        } = this.props.location.state.record;
+        const { name, desc, price, detail, imgs } = memoryUtils.product;
         const { cName_1, cName_2 } = this.state;
 
         const title = (

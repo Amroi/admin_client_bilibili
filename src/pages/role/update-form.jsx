@@ -42,13 +42,13 @@ export default class UpdateForm extends Component {
         this.setState({ checkedKeys }); // 改变所有选中node的状态
     };
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         this.treeNode = this.getTreeNode(menuList);
     }
 
     /* 当组件接受到新的props时自动调用(render前做准备)
 	解决二次打开默认选择初始值不更新的问题 */
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         console.log("componentWillReceiveProps", nextProps);
         const menus = nextProps.role.menus;
         this.setState({ checkedKeys: menus });

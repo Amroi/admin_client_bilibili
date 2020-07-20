@@ -178,7 +178,7 @@ export default class Category extends Component {
     };
 
     // 把Table表头的数据放在这里不放在render中是因为避免更新又重新数据渲染，多次渲染死值无意义
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         this.initColumns();
     }
 

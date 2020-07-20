@@ -5,6 +5,7 @@ import LinkButton from "../../components/link-button";
 import { reqCategorys, reqAddOrUpdateProduct } from "../../api";
 import PicturesWall from "./pictures-wall";
 import RichTextEditor from "./rich-text-editor";
+import memoryUtils from "../../utils/memoryUtils";
 
 const { Item } = Form;
 const { TextArea } = Input;
@@ -155,12 +156,17 @@ export default class ProductAddUpate extends Component {
         this.getCategorys("0"); // 无前置事件监听所以要先准备数据
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         // 取出上一级路由跳转携带的state,但我们添加和更新用的是同一个路由,如果添加有值,更新没值
-        const record = this.props.location.state;
-        this.isUpdate = !!record; // 保存是否是更新的标识,这个运算符可以把表达式强行转换为 逻辑值。
+        const record = memoryUtils.product;
+        this.isUpdate = !!record._id; // 保存是否是更新的标识,这个运算符可以把表达式强行转换为 逻辑值。
         // (或许会问为啥不用！?? undefined也是有值吧,而这个属性也是固有属性，!!可达到快速判断值非空的目的)
         this.product = record || {}; // 取出并保存到本地以便能调用,做对应处理可能为空
+    }
+
+    // 在卸载之前清楚保存的数据
+    componentWillUnmount() {
+        memoryUtils.product = {};
     }
 
     render() {

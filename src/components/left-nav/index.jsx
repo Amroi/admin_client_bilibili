@@ -124,7 +124,7 @@ class LeftNav extends Component {
 	 Why use？因为我们在render()里面的变量openKey是在下面这个方法中产生的,
 	 不先使用下面的方法会是undefined结果,在render()先使用必然会出现多次渲染,都不是很好的处理。
 	*/
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         this.menuNodes = this.getMenuNodes_reduce(menuList);
     }
 

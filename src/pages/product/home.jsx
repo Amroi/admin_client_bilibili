@@ -4,6 +4,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import LinkButton from "../../components/link-button";
 import { reqProducts, reqSearchProducts, reqUpdateStatus } from "../../api";
 import { PAGE_SIZE } from "../../utils/constants";
+import memoryUtils from "../../utils/memoryUtils";
 
 const { Option } = Select;
 
@@ -60,32 +61,30 @@ export default class ProductHome extends Component {
             {
                 title: "操作",
                 width: 100,
-                render: (_, record) => (
+                render: (_, product) => (
                     <span>
-                        <LinkButton
-                            onClick={
-                                () =>
-                                    this.props.history.push("/product/detail", {
-                                        record,
-                                    }) // 将所有(product里的)对象使用state传递给目标路由组件,指定为state中的对象属性名,所以包裹{}
-                            }
-                        >
+                        <LinkButton onClick={() => this.showDetail(product)}>
                             详情
                         </LinkButton>
-                        <LinkButton
-                            onClick={() =>
-                                this.props.history.push(
-                                    "product/addupate",
-                                    record
-                                )
-                            }
-                        >
+                        {/* <LinkButton onClick={() =>this.props.history.push("/product/addupate",record)}> */}
+                        <LinkButton onClick={() => this.showUpdate(product)}>
                             修改
                         </LinkButton>
                     </span>
                 ),
             },
         ];
+    };
+
+    showDetail = (product) => {
+        // 缓存product对象,给detail组件使用
+        memoryUtils.product = product;
+        this.props.history.push("/product/detail");
+    };
+
+    showUpdate = (product) => {
+        memoryUtils.product = product;
+        this.props.history.push("/product/addupate");
     };
 
     // 更新指定商品的状态
@@ -126,7 +125,7 @@ export default class ProductHome extends Component {
         }
     };
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         this.initColumns();
     }
 

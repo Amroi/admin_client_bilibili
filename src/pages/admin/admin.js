@@ -12,6 +12,7 @@ import User from "../user/user";
 import Bar from "../charts/bar";
 import Line from "../charts/line";
 import Pie from "../charts/pie";
+import NotFound from '../not-found/not-found'
 import memoryUtils from "../../utils/memoryUtils";
 
 
@@ -43,6 +44,7 @@ export default class Admin extends Component {
 					<Header />
 					<Content style={{ margin: 20, backgroundColor: "#fff" }}>
 						<Switch>
+							<Redirect exact from='/' to='/home' />  {/*如果访问根路径转到主页,必须是精准匹配 */}
 							<Route path='/home' component={Home} />
 							<Route path='/category' component={Category} />
 							<Route path='/product' component={Product} />
@@ -51,7 +53,7 @@ export default class Admin extends Component {
 							<Route path='/charts/bar' component={Bar} />
 							<Route path='/charts/line' component={Line} />
 							<Route path='/charts/pie' component={Pie} />
-							<Redirect to='/home' />   {/* 无路径匹配时 自动匹配 /home 地址*/}
+							<Route component={NotFound} /> {/*上方路径没有匹配到时，显示404*/}
 						</Switch>
 					</Content>
 					<Footer style={{ textAlign: "center", color: "#cccccc" }}>

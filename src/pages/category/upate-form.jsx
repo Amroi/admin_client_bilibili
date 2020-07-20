@@ -7,7 +7,7 @@ import { Form, Input } from "antd";
 export default class UpateForm extends Component {
     formRef = React.createRef();
     static propTypes = {
-        categoryName: PropTypes.string.isRequired,
+        categoryName: PropTypes.string,
         setForm: PropTypes.func.isRequired,
     };
 
