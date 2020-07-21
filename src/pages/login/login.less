@@ -29,6 +29,27 @@
         background-color: #fff;
         margin: 200px auto;
         padding: 20px 40px;
+        position: relative;
+
+        .error-msg {
+            visibility: hidden; //visibility 属性规定元素是否可见(会占用空间)
+            position: absolute;
+            top: 0;
+            left: 0;
+            text-align: center;
+            height: 30px;
+            width: 100%;
+            background: #f60c1a;
+            color: #ffffff;
+            font-size: 16px;
+            transform: translateY(-30px);
+            transition: all 0.3s;
+            &.show {
+                // 跟上个是同一标签下
+                visibility: visible;
+                transform: translateY(0); // 要显示的时候从上方30px移下来
+            }
+        }
 
         h2 {
             font-size: 30px;

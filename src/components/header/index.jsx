@@ -2,12 +2,15 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { reqWeather } from "../../api";
 import { formateDate } from "../../utils/dateUtils";
-import memoryUtils from "../../utils/memoryUtils";
 import "./index.less";
 import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import menuList from "../../config/menuConfig";
 import LinkButton from "../link-button";
+
+// import memoryUtils from "../../utils/memoryUtils";
+import { connect } from "react-redux";
+import { logout } from "../../redux/actions";
 
 class Header extends Component {
     state = {
@@ -59,7 +62,8 @@ class Header extends Component {
             icon: <ExclamationCircleOutlined />,
             content: "确定要退出吗？",
             onOk: () => {
-                this.props.history.replace("/login");
+                // this.props.history.replace("/login");
+                this.props.logout(); // 不需要手动跳转路由
             },
             okText: "确定",
             cancelText: "取消",
@@ -87,10 +91,11 @@ class Header extends Component {
             dayPictureUrl,
             nightPictureUrl,
         } = this.state;
-        const name = memoryUtils.user.username;
+        const name = this.props.user.username;
 
         // 得到当前需要显示的title
-        const title = this.getTitle();
+        // const title = this.getTitle(); // 普通js方法
+        const title = this.props.headTitle; // 利用redux方法
 
         return (
             <div className="header">
@@ -116,4 +121,7 @@ class Header extends Component {
     }
 }
 
-export default withRouter(Header);
+export default connect(
+    (state) => ({ headTitle: state.headTitle, user: state.user }),
+    { logout }
+)(withRouter(Header));

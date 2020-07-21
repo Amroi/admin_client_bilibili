@@ -1,14 +1,17 @@
 import React, { Component } from "react";
 import { Card, Button, Table, message, Modal } from "antd";
 import { reqRoles, reqAddRole, reqUpdateRole } from "../../api";
-import memoryUtils from "../../utils/memoryUtils.js";
-import storageUtils from "../../utils/storageUtils";
 import { formateDate } from "../../utils/dateUtils.js";
 import AddForm from "./add-form";
 import UpateForm from "./update-form";
 
+// import memoryUtils from "../../utils/memoryUtils.js";
+// import storageUtils from "../../utils/storageUtils";
+import { connect } from "react-redux";
+import { logout } from "../../redux/actions";
+
 // 角色路由
-export default class Role extends Component {
+class Role extends Component {
     constructor(props) {
         super(props);
         this.auth = React.createRef();
@@ -88,17 +91,19 @@ export default class Role extends Component {
         role.menus = menus;
         role.auth_time = Date.now();
         //Date.now()和new.Date().getTime()都是获取1970年1月1日截止到现在时刻的时间戳
-        role.auth_name = memoryUtils.user.username;
+        role.auth_name = this.props.user.username;
 
         // 请求更新
         const result = await reqUpdateRole(role);
         if (result.status === 0) {
             // 判断是否更改的是当前用户的角色权限
-            if (role._id === memoryUtils.user.role_id) {
-                memoryUtils.user = {};
+            if (role._id === this.props.user.role_id) {
+                /*
+				memoryUtils.user = {};
                 storageUtils.removeUser(); // 先要清除两个地方的存储的信息
-
-                this.props.history.replace("/login");
+				this.props.history.replace("/login");
+				*/
+                this.props.logout();
                 message.warn("当前角色权限已发生更改,请重新登录", 5);
             } else {
                 // this.getRoles();  // 不需要重新请求整个接口又去加载
@@ -246,3 +251,5 @@ export default class Role extends Component {
         );
     }
 }
+
+export default connect((state) => ({ user: state.user }), { logout })(Role);

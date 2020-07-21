@@ -80,7 +80,6 @@ export default class Bar extends Component {
                         更新
                     </Button>
                 </Card>
-
                 <Card title="柱状图">
                     <ReactEcharts option={this.getOption(sales, stores)} />
                 </Card>

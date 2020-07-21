@@ -1,4 +1,4 @@
-//  import store from 'store';
+import store from 'store';
 /*
 进行local数据存储管理的工具模块。
 (localStorage 属性语法详见：'https://www.runoob.com/jsref/prop-win-localstorage.html')
@@ -17,20 +17,20 @@ const USER_KEY = 'user_key';
 export default {
 	// 保存user 
 	saveUser(user) {
-		sessionStorage.setItem(USER_KEY, JSON.stringify(user)) //因为保存的必须是对象的json字符串 
-		// store.set(USER_KEY, user)  // 内部会自动转换成 json再保存
+		// sessionStorage.setItem(USER_KEY, JSON.stringify(user)) //因为保存的必须是对象的json字符串 
+		store.set(USER_KEY, user)  // 内部会自动转换成 json再保存
 	},
 
 	// 读取user
 	getUser() {
-		return JSON.parse(sessionStorage.getItem(USER_KEY) || "{}")
-		// return store.get(USER_KEY) || {}
+		// return JSON.parse(sessionStorage.getItem(USER_KEY) || "{}")
+		return store.get(USER_KEY) || {}
 	},
 
 	// 删除user
 	removeUser() {
-		sessionStorage.removeItem(USER_KEY)
-		// store.remove(USER_KEY)
+		// sessionStorage.removeItem(USER_KEY)
+		store.remove(USER_KEY)
 	}
 }
 

@@ -3,9 +3,12 @@ import logo from "../../assets/images/logo.png";
 import "./index.less";
 import { Link, withRouter } from "react-router-dom";
 import menuList from "../../config/menuConfig";
-import memoryUtils from "../../utils/memoryUtils";
 import { Menu } from "antd";
 import { Icon } from "@ant-design/compatible"; // 4.0已经废弃，但能兼容
+
+// import memoryUtils from "../../utils/memoryUtils";
+import { connect } from "react-redux";
+import { setHeadTitle } from "../../redux/actions";
 
 const { SubMenu } = Menu; // 菜单下的菜单项
 
@@ -14,8 +17,8 @@ class LeftNav extends Component {
     // 判断当前登陆用户拥有哪些item权限的方法，此方法返回值应当是布尔类型
     hasAuth = (item) => {
         const { key, isPublic } = item;
-        const menus = memoryUtils.user.role.menus;
-        const username = memoryUtils.user.username;
+        const menus = this.props.user.role.menus;
+        const username = this.props.user.username;
 
         /* 理当有下面三种身份情况：
 		1.如果当前用户是admin(超级管理员)
@@ -81,9 +84,21 @@ class LeftNav extends Component {
             // 关于左侧导航栏的显示,如果当前用户有对应的item权限,才需要显示对应菜单项
             if (this.hasAuth(item)) {
                 if (!item.children) {
+                    if (item.key === path || path.indexOf(item.key) === 0) {
+                        // 判断item是否是当前对应的item
+                        // 更新redux里的setHeadTitle状态
+                        this.props.setHeadTitle(item.title);
+                    }
+
                     pre.push(
                         <Menu.Item key={item.key}>
-                            <Link to={item.key}>
+                            {/* <Link to={item.key}> */}
+                            <Link
+                                to={item.key}
+                                onClick={() =>
+                                    this.props.setHeadTitle(item.title)
+                                }
+                            >
                                 <Icon type={item.icon} />
                                 {item.title}
                             </Link>
@@ -124,7 +139,7 @@ class LeftNav extends Component {
 	 Why use？因为我们在render()里面的变量openKey是在下面这个方法中产生的,
 	 不先使用下面的方法会是undefined结果,在render()先使用必然会出现多次渲染,都不是很好的处理。
 	*/
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         this.menuNodes = this.getMenuNodes_reduce(menuList);
     }
 
@@ -160,4 +175,6 @@ class LeftNav extends Component {
     }
 }
 
-export default withRouter(LeftNav);
+export default connect((state) => ({ user: state.user }), { setHeadTitle })(
+    withRouter(LeftNav)
+);

@@ -1,16 +1,22 @@
 import React from "react";
 import "./login.less";
 import logo from "../../assets/images/logo.png";
-import { reqLogin } from '../../api';
-import memoryUtils from '../../utils/memoryUtils';
-import { Form, Input, Button, message } from "antd";
+import { Form, Input, Button } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import storageUtils from "../../utils/storageUtils";
+import { Redirect } from "react-router-dom";
+
+import { connect } from 'react-redux'
+import { login } from '../../redux/actions'
 
 // 登录的路由组件
-export default class Login extends React.Component {
+class Login extends React.Component {
 	onFinish = async (values) => {
 		const { username, password } = values;
+
+		// 调用分发的异步action函数 => 去发送登录的异步请求,有了结果后更新状态
+		this.props.login(username, password)
+
+		/*
 		const result = await reqLogin(username, password)
 		// console.log('登陆结果', result); // {status: 0,data: user}; {status: 1,msg: 'xxx'}
 		if (result.status === 0) { // 判断登陆成功情况（外层有个status:200是接口请求成功的status,前面文档ajax.js我们已经指定在data中了）
@@ -21,12 +27,12 @@ export default class Login extends React.Component {
 			storageUtils.saveUser(user);
 			// (解决刷新页面不能持续登录)保存在local中/或session中(第二步是=>在入口的index.js读取)
 
-			this.props.history.replace('/');
+			this.props.history.replace('/home');
 			// history中replace()和push()方法的区别：是否可以回退,不可以前者，可以后者
 		} else {
 			message.error(result.msg)
 		}
-
+		*/
 	};
 
 	validatePwd = (rule, value) => {
@@ -44,6 +50,13 @@ export default class Login extends React.Component {
 	};
 
 	render() {
+
+		// 如果用户已登录(重新加载页面都算已登录,只有退出是失去登录),自动跳转到主页
+		const user = this.props.user
+		if (user && user._id) {
+			return <Redirect to="/home" />
+		}
+
 		return (
 			<div className="login">
 				<header className="login-header">
@@ -52,6 +65,7 @@ export default class Login extends React.Component {
 				</header>
 
 				<section className="login-content">
+					<div className={user.errorMsg ? 'error-msg show' : 'error-msg'}>{user.errorMsg}</div>
 					<h2>用户登录</h2>
 					<Form
 						name="normal_login"
@@ -107,3 +121,5 @@ export default class Login extends React.Component {
 		);
 	}
 }
+
+export default connect(state => ({ user: state.user }), { login })(Login)
