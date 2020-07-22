@@ -6,6 +6,7 @@
 import { SET_HEAD_TITLE, RECEIVE_USER, SHOW_ERROR_MSG, RESET_USER } from './action-types'
 import { reqLogin } from '../api'
 import storageUtils from '../utils/storageUtils'
+import { message } from 'antd'
 
 // 设置头部标题的同步action
 export const setHeadTitle = (headTitle) => ({ type: SET_HEAD_TITLE, data: headTitle })
@@ -17,6 +18,8 @@ export const login = (username, password) => {
 		const result = await reqLogin(username, password) // {status: 0,data: user} {status: 1,msg: 'xxx'}
 		// 2.1 如果成功,分发成功的同步action
 		if (result.status === 0) {
+			message.success('登录成功')
+
 			const user = result.data
 			storageUtils.saveUser(user) // 保存到local/session中
 			dispatch(receiveUser(user)) // 分发接收用户的同步action
