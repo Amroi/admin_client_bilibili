@@ -1,27 +1,51 @@
-## 1.项目的基本结构：
+## 项目的结构及说明：
 
-![image.png](https://i.loli.net/2020/06/25/WVRkT7vAtcy8jfJ.png)
+### a. 前后台分离的项目:
 
-## 2.项目说明:
+    1. 后台应用负责处理前台应用提交的请求，并给前台应用返回json数据
+    2. 前台应用负责展现数据，与用户交互，与后台应用交互
 
-    前后台分离的项目
-    1). 后台应用负责处理前台应用提交的请求，并给前台应用返回json数据
-    2). 前台应用负责展现数据，与用户交互，与后台应用交互
+### b. 技术栈：
+	
+	1. 后台应用：...
+	2. 前台数据展示/交互/组件化： react/react-router-dom/antd/redux
+	3. 前台后交互：axios/jsonp/ promise/async/await 接口测试工具：postman
+	4. 模块化：ES6/CommonJS
+	5. 项目构建/工程化：webpack/ceate-react-app/eslint
+	6. 其他：富文本编辑器：react-draft-wysiwyg 图表库：echarts
 
-## 3.未观看章节：
+### c. 文件结构
 
-    P94-P99(react的相关理论知识)
-    难点：P20-P27, P49, P53, P55-P56, P61-P62, P73, P75
+![image.png](https://i.loli.net/2020/08/04/xgKdT3kIA7BHNbG.png)
 
-## 4.天气接口请求异常
+	1. api: ajax相关
+	2. assets: 公用资源
+	3. components：非路由组件
+	4. config：项目配置
+	5. pages: 路由组件
+	6. utils：工具模块
+	7. App.js: 应用根组件
+	8. index.js: 入口js
 
-    a. 会出现跨域问题,和404问题(本地无法代理需要配置代理服务器)--详见P22有原理解析
-    b. 解决方法:
-    	Ⅰ. jsonp 但只能接受Get类型请求(本质:并不是ajax请求,是一般的get请求,在服务器端返回的是一个响应函数(即我们定义的callback函数),浏览器执行js代码就能得到结果和数据)
-     	Ⅱ. cors
-     	Ⅲ. 配置代理服务器,它可以帮我们 转发 请求到目标接口路径
+### d. 路由配置
 
-    c. 就以此天气请求为例(只能生效于开发环境且基于脚手架，生产环境打包再运行默认是没有的)：
-    	Ⅰ. 引入依赖'yarn add http-proxy-middleware'（视频好像说不用引入。。。）
-    	Ⅱ. 项目根目录配置json文件加上： "proxy": "http://api.map.baidu.com" 即服务器的目标地址(单单根路径,不包括当前url下的子地址)
-    	Ⅲ. 我们调用的时候，一般指定url=''(因为本地可能为3000，3001...)后再加上其子路径(即类似+ '/a/b' ...其他参数)
+![image.png](https://i.loli.net/2020/08/04/ZdoIXE3lChcGDAb.png)
+
+### e. 项目主要界面展示
+
+> 登陆界面(重定向路由和路由守卫)
+
+![image.png](https://i.loli.net/2020/08/04/TgzimNb3wBqecPA.png)
+ 
+> 主界面
+
+![image.png](https://i.loli.net/2020/08/04/Mmc9vnrUYtblBzO.png)
+
+> 商品管理
+
+![image.png](https://i.loli.net/2020/08/04/1fRxMCWaS25TgAk.png)
+
+> 角色管理
+
+![image.png](https://i.loli.net/2020/08/04/di6AyIYZjt1Q7ru.png)
+
